@@ -8,7 +8,6 @@ import Firebase
 import FirebaseAuth
 import SwiftUI
 
-
 struct ContentView: View {
     @State private var email: String = ""
     @State private var password: String = ""
@@ -16,11 +15,10 @@ struct ContentView: View {
     
     var body: some View {
         if userIsLoggedIn {
-            // something
-        }
-        else {
+            MainTabView()
+        } else {
             content
-        } 
+        }
     }
     
     var content: some View {
@@ -93,11 +91,10 @@ struct ContentView: View {
             .onAppear {
                 Auth.auth().addStateDidChangeListener { auth, user in
                     if user != nil {
-                        userIsLoggedIn.toggle()
+                        userIsLoggedIn = true
                     }
                 }
             }
-        
         }
         .ignoresSafeArea()
     }
@@ -106,6 +103,8 @@ struct ContentView: View {
         Auth.auth().createUser(withEmail: email, password: password) { result, error in
             if error != nil {
                 print(error!.localizedDescription)
+            } else {
+                userIsLoggedIn = true
             }
         }
     }
@@ -114,10 +113,14 @@ struct ContentView: View {
         Auth.auth().signIn(withEmail: email, password: password) { result, error in
             if error != nil {
                 print(error!.localizedDescription)
+            } else {
+                userIsLoggedIn = true
             }
         }
     }
 }
+
+
 
 #Preview {
     ContentView()
