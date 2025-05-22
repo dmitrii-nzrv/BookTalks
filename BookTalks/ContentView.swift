@@ -12,8 +12,18 @@ import SwiftUI
 struct ContentView: View {
     @State private var email: String = ""
     @State private var password: String = ""
+    @State private var userIsLoggedIn: Bool = false
     
     var body: some View {
+        if userIsLoggedIn {
+            // something
+        }
+        else {
+            content
+        } 
+    }
+    
+    var content: some View {
         ZStack{
             Color.black
             
@@ -80,7 +90,13 @@ struct ContentView: View {
                 
             }
             .frame(width: 350)
-        
+            .onAppear {
+                Auth.auth().addStateDidChangeListener { auth, user in
+                    if user != nil {
+                        userIsLoggedIn.toggle()
+                    }
+                }
+            }
         
         }
         .ignoresSafeArea()
