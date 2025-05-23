@@ -9,12 +9,12 @@ import FirebaseAuth
 import SwiftUI
 
 struct ContentView: View {
-    @State private var email: String = ""
-    @State private var password: String = ""
-    @State private var userIsLoggedIn: Bool = false
+    @State private var email = ""
+    @State private var password = ""
+    @StateObject private var authController = AuthController()
     
     var body: some View {
-        if userIsLoggedIn {
+        if authController.isLoggedIn {
             MainTabView()
         } else {
             content
@@ -63,7 +63,7 @@ struct ContentView: View {
                     .foregroundStyle(.white)
                 
                 Button {
-                    register()
+                    authController.register(email: email, password: password)
                 } label: {
                     Text("Sign up")
                         .bold()
@@ -76,7 +76,7 @@ struct ContentView: View {
                 .offset(y:100)
                 
                 Button {
-                    login()
+                    authController.login(email: email, password: password)
                 } label: {
                     Text("Already have an account? Login")
                         .bold()
@@ -89,38 +89,12 @@ struct ContentView: View {
             }
             .frame(width: 350)
             .onAppear {
-                Auth.auth().addStateDidChangeListener { auth, user in
-                    if user != nil {
-                        userIsLoggedIn = true
-                    }
-                }
+                authController.listenAuthState()
             }
         }
         .ignoresSafeArea()
     }
-    
-    func register(){
-        Auth.auth().createUser(withEmail: email, password: password) { result, error in
-            if error != nil {
-                print(error!.localizedDescription)
-            } else {
-                userIsLoggedIn = true
-            }
-        }
-    }
-    
-    func login(){
-        Auth.auth().signIn(withEmail: email, password: password) { result, error in
-            if error != nil {
-                print(error!.localizedDescription)
-            } else {
-                userIsLoggedIn = true
-            }
-        }
-    }
 }
-
-
 
 #Preview {
     ContentView()
