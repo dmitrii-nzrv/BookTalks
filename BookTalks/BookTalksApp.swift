@@ -9,17 +9,16 @@ import FirebaseCore
 import FirebaseAuth
 import SwiftUI
 
-
 @main
 struct BookTalksApp: App {
-    
+    @StateObject var authController = AuthController()
     init(){
         FirebaseApp.configure()
     }
-    
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .environmentObject(authController)
         }
     }
 }

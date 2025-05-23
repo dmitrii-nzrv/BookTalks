@@ -1,4 +1,12 @@
+//
+//  MainTabView.swift
+//  BookTalks
+//
+//  Created by Dmitrii Nazarov on 23.05.2025.
+//
+
 import SwiftUI
+import FirebaseAuth
 
 struct MainTabView: View {
     init() {
@@ -32,6 +40,7 @@ struct MainTabView: View {
 }
 
 struct BrowseView: View {
+    @State private var showProfile = false
     var body: some View {
         NavigationView {
             ScrollView {
@@ -43,12 +52,15 @@ struct BrowseView: View {
                             .background(Color(.systemGray6))
                             .cornerRadius(12)
                         Spacer()
-                        Button(action: {}) {
-                            Image(systemName: "person.crop.circle.fill")
-                                .resizable()
-                                .frame(width: 36, height: 36)
-                                .foregroundColor(.blue)
+                        NavigationLink(destination: ProfileView(), isActive: $showProfile) {
+                            Button(action: { showProfile = true }) {
+                                Image(systemName: "person.crop.circle.fill")
+                                    .resizable()
+                                    .frame(width: 36, height: 36)
+                                    .foregroundColor(.blue)
+                            }
                         }
+                        .buttonStyle(PlainButtonStyle())
                     }
                     .padding(.horizontal)
                     .padding(.top, 8)
@@ -101,6 +113,38 @@ struct BrowseView: View {
             }
             .background(Color.black.ignoresSafeArea())
             .navigationBarTitleDisplayMode(.inline)
+        }
+    }
+}
+
+struct ProfileView: View {
+    @EnvironmentObject var authController: AuthController
+    var body: some View {
+        ZStack {
+            Color.black.ignoresSafeArea()
+            VStack(spacing: 24) {
+                Image(systemName: "person.crop.circle.fill")
+                    .resizable()
+                    .frame(width: 100, height: 100)
+                    .foregroundColor(.blue)
+                Text("Profile")
+                    .font(.largeTitle)
+                    .foregroundColor(.white)
+                if let email = authController.userEmail {
+                    Text(email)
+                        .foregroundColor(.gray)
+                        .font(.title3)
+                }
+                Button(action: {
+                    authController.signOut()
+                }) {
+                    Text("Log Out")
+                        .foregroundColor(.red)
+                        .bold()
+                        .padding()
+                        .background(RoundedRectangle(cornerRadius: 10).fill(Color.white.opacity(0.1)))
+                }
+            }
         }
     }
 }

@@ -9,9 +9,9 @@ import FirebaseAuth
 import SwiftUI
 
 struct ContentView: View {
+    @EnvironmentObject var authController: AuthController
     @State private var email = ""
     @State private var password = ""
-    @StateObject private var authController = AuthController()
     
     var body: some View {
         if authController.isLoggedIn {
@@ -41,7 +41,8 @@ struct ContentView: View {
                     .foregroundStyle(.white)
                     .textFieldStyle(.plain)
                     .placeholder(when: email.isEmpty) {
-                        Text("Email").foregroundStyle(.white)
+                        Text("Email")
+                            .foregroundStyle(.white)
                             .bold()
                     }
                 
@@ -49,11 +50,11 @@ struct ContentView: View {
                     .frame(width: 350, height: 1)
                     .foregroundStyle(.white)
                 
-                SecureField("Password", text: $password)
+                SecureField("", text: $password)
                     .foregroundStyle(.white)
                     .textFieldStyle(.plain)
                     .placeholder(when: password.isEmpty) {
-                        Text("Passwrd")
+                        Text("Password")
                             .foregroundStyle(.white)
                             .bold()
                     }
@@ -88,9 +89,6 @@ struct ContentView: View {
                 
             }
             .frame(width: 350)
-            .onAppear {
-                authController.listenAuthState()
-            }
         }
         .ignoresSafeArea()
     }
